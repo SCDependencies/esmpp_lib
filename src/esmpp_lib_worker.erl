@@ -10,7 +10,7 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([start_link/1]).
+-export([start_link/1,start/1]).
 -export([submit/2, data_sm/2, unbind/1, query_sm/2, cancel_sm/2,
          replace_sm/2]).
 -export([loop_tcp/6, enquire_link/1]).
@@ -44,6 +44,8 @@
 start_link(Param) ->
     gen_server:start_link(?MODULE, Param, []).
 
+start(Param) ->
+  gen_server:start(?MODULE, Param, []).
 
 -spec submit(pid(), list()) -> ok.
 submit(WorkerPid, List) ->
