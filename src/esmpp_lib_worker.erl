@@ -148,7 +148,7 @@ handle_info({bind, Mode}, Param) ->
         {error, Reason} ->
             ok = Handler:network_error(WorkerPid, Reason),
             WorkerPid ! {terminate, Reason},
-            Param;
+            lists:keydelete(password, 1, Param);
         Socket ->
             Param1 = accumulate_seq_num([{socket, Socket}|Param]),
             ListenPid = spawn_link(?MODULE, loop_tcp, [<<>>, Transport, Socket, WorkerPid, Handler, ProcessingPid]),
