@@ -13,8 +13,8 @@
 
 -export([submit_sm_resp_handler/2, deliver_sm_handler/2, data_sm_handler/2, 
             data_sm_resp_handler/2, query_sm_resp_handler/2, unbind_handler/1,
-            outbind_handler/2, submit_error/2, network_error/2, decoder_error/2]).
-
+            outbind_handler/2, submit_error/2, network_error/2, decoder_error/2,
+            bind_success/1]).
 
 %% ------------------------------------------------------------------
 %% Behaviour Function Definitions
@@ -49,6 +49,10 @@ network_error(Pid, Error) ->
 
 decoder_error(Pid, Error) ->
     ?LOG_INFO("Pid ~p return decoder error ~p~n", [Pid, Error]).
+
+bind_success(Pid) ->
+  ?LOG_INFO("bind_success ~p~n", [Pid]).
+
 
 %% ------------------------------------------------------------------
 %% Internal Function Definitions

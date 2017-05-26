@@ -36,6 +36,7 @@
 -callback network_error(pid(), term())          -> ok.
 -callback decoder_error(pid(), term())          -> ok.
 -callback submit_error(pid(), term())           -> ok.
+-callback bind_success(pid())                   -> ok.
 
 %% ------------------------------------------------------------------
 %% API Function Definitions
@@ -194,8 +195,11 @@ bind(Mode, Param) ->
             Resp = Transport:send(Socket, Bin),
             case handle_bind(Resp, Socket, Transport) of
                 ok ->
-                    ?LOG_INFO("Socket ~p mode ~p~n", [Socket, Mode]),
-                    Socket;
+                  ?LOG_INFO("Socket ~p mode ~p~n", [Socket, Mode]),
+                  WorkerPid = proplists:get_value(worker_pid, Param),
+                  Handler = proplists:get_value(handler, Param),
+                  Handler:bind_success(WorkerPid),
+                  Socket;
                 {error, Reason} ->    
                     {error, Reason}
             end
