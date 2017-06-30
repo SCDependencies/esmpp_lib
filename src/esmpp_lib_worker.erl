@@ -149,7 +149,7 @@ handle_info({bind, Mode}, Param) ->
         {error, Reason} ->
             ok = Handler:network_error(WorkerPid, Reason),
             WorkerPid ! {terminate, Reason},
-            lists:keydelete(password, 1, Param);
+            Param;
         Socket ->
             Param1 = accumulate_seq_num([{socket, Socket}|Param]),
             ListenPid = spawn_link(?MODULE, loop_tcp, [<<>>, Transport, Socket, WorkerPid, Handler, ProcessingPid]),
@@ -169,14 +169,19 @@ handle_info({get_state, ListenPid}, State) ->
     ListenPid ! {state, State},
     {noreply, State};
 handle_info({terminate, Reason}, State) ->
-    {stop, Reason, State};
+    ?LOG_CRITICAL("handle_info terminate ", []),
+    State1 = lists:keyreplace(password, 1, State, {password, "xxx"}),
+%%    State1 = lists:keydelete(password, 1, State),
+    {stop, Reason, State1};
 handle_info(Info, State) ->
     ?LOG_ERROR("Unknown info msg ~p~n", [Info]),
     {noreply, State}.
 
-terminate(Reason, State) -> 
+terminate(Reason, State) ->
     ?LOG_CRITICAL("Process terminate with reason ~p state is ~p~n", [Reason, State]),
     ok.
+
+
 
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
