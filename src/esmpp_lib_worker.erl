@@ -37,6 +37,7 @@
 -callback decoder_error(pid(), term())          -> ok.
 -callback submit_error(pid(), term())           -> ok.
 -callback bind_success(pid())                   -> ok.
+-callback sequence_number_handler(list())       -> ok.
 
 %% ------------------------------------------------------------------
 %% API Function Definitions
