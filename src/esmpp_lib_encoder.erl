@@ -207,7 +207,7 @@ replace_sm(List, Param) ->
     ?REPLACE_SM(Length, SeqNum, MsgId, LenId, SaddrTon, SaddrNpi, Saddr,
                         LenS, LenTxt, Txt).
 
-assemble_submit({_SarTotSeg, []}, _SarRefNum, _List, _Param, _Encode, Acc) ->
+assemble_submit({SarTotSeg, []}, _SarRefNum, _List, _Param, _Encode, Acc) ->
     lists:reverse(Acc);
 assemble_submit({SarTotSeg, [H|T]}, SarRefNum, List, Param, Encode, Acc) ->
     {SarSegNum, Chunk} = H,
@@ -226,7 +226,12 @@ assemble_submit({SarTotSeg, [H|T]}, SarRefNum, List, Param, Encode, Acc) ->
     DaddrTon = proplists:get_value(dest_addr_ton, Param),
     DaddrNpi = proplists:get_value(dest_addr_npi, Param),
     NewList = lists:keyreplace(text, 1, List, {text, Chunk}),
-    ok = Handler:sequence_number_handler([{sequence_number, SeqNum}|NewList]),
+    case T of
+	[] -> 
+	    ok = Handler:sequence_number_handler([{sequence_number, {SeqNum, SarTotSeg, last_segment}} | NewList]);
+	_ -> 
+	    ok = Handler:sequence_number_handler([{sequence_number, {SeqNum, SarTotSeg, segment}} | NewList])
+	end,
     Bin = ?SUBMIT_SM_CUT(1234, SeqNum, ServType, LenType, SaddrTon, SaddrNpi, 
                 Saddr, LenSaddr, DaddrTon, DaddrNpi, Daddr, LenDaddr,
                 Encode, LenMsg, Chunk, LenChunk, SarRefNum, SarSegNum, SarTotSeg),
