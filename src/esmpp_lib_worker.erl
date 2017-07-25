@@ -51,33 +51,33 @@ start(Param) ->
 
 -spec submit(pid(), list()) -> ok.
 submit(WorkerPid, List) ->
-    gen_server:cast(WorkerPid, {submit, List}),
-    ?LOG_INFO("Send msg submit ~p~n ", [List]).
+    gen_server:cast(WorkerPid, {submit, List}).
+    %% ?LOG_INFO("Send msg submit ~p~n ", [List]).
 
 -spec data_sm(pid(), list()) -> ok.
 data_sm(WorkerPid, List) ->
-    gen_server:cast(WorkerPid, {data_sm, List}),
-    ?LOG_INFO("Send msg data_sm ~p~n ", [List]).
+    gen_server:cast(WorkerPid, {data_sm, List}).
+    %% ?LOG_INFO("Send msg data_sm ~p~n ", [List]).
 
 -spec query_sm(pid(), list()) -> ok.
 query_sm(WorkerPid, List) ->
-    gen_server:cast(WorkerPid, {query_sm, List}),
-    ?LOG_INFO("Send msg query_sm ~p~n ", [List]).
+    gen_server:cast(WorkerPid, {query_sm, List}).
+    %% ?LOG_INFO("Send msg query_sm ~p~n ", [List]).
 
 -spec replace_sm(pid(), list()) -> ok.
 replace_sm(WorkerPid, List) ->
-    gen_server:cast(WorkerPid, {replace_sm, List}),
-    ?LOG_INFO("Send msg replace_sm ~p~n ", [List]).
+    gen_server:cast(WorkerPid, {replace_sm, List}).
+    %% ?LOG_INFO("Send msg replace_sm ~p~n ", [List]).
 
 -spec cancel_sm(pid(), list()) -> ok.
 cancel_sm(WorkerPid, List) ->
-    gen_server:cast(WorkerPid, {cancel_sm, List}),
-    ?LOG_INFO("Send msg cancel_sm ~p~n ", [List]).
+    gen_server:cast(WorkerPid, {cancel_sm, List}).
+    %% ?LOG_INFO("Send msg cancel_sm ~p~n ", [List]).
 
 -spec unbind(pid()) -> ok.  
 unbind(WorkerPid) ->
-    gen_server:cast(WorkerPid, {unbind, []}),
-    ?LOG_INFO("Send msg unbind for pid ~p~n ", [WorkerPid]).
+    gen_server:cast(WorkerPid, {unbind, []}).
+    %% ?LOG_INFO("Send msg unbind for pid ~p~n ", [WorkerPid]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
