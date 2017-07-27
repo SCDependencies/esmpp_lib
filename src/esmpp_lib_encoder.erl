@@ -98,7 +98,7 @@ submit_sm(List, Param) ->
             SaddrNpi = proplists:get_value(source_addr_npi, Param),
             DaddrTon = proplists:get_value(dest_addr_ton, Param),
             DaddrNpi = proplists:get_value(dest_addr_npi, Param),
-            ok = Handler:sequence_number_handler([{sequence_number, { SeqNum, single_sms}}|List]),
+            ok = Handler:sequence_number_handler([{sequence_number, [SeqNum] } | List]),
             Bin = ?SUBMIT_SM(1234, SeqNum, ServType, LenType, SaddrTon, SaddrNpi, 
                         Saddr, LenSaddr, DaddrTon, DaddrNpi, Daddr, LenDaddr,
                         Encode, LenTxt, Text),
@@ -109,6 +109,11 @@ submit_sm(List, Param) ->
             [Bin1];
         true ->
             Tuple = cut_txt(Text, 1, MaxLen, []),
+	    { _ , SmsSet } = Tuple,
+	    FirstSeqNum = proplists:get_value(seq_n, Param),
+	    %% ?LOG_INFO("FirstSeqNum ~p ~p", [FirstSeqNum, length(SmsSet)]),
+	    Seqs = lists:seq(FirstSeqNum, FirstSeqNum + length(SmsSet)-1),    
+	    ok = Handler:sequence_number_handler([{sequence_number, Seqs } | List]),
             SarRefNum = sar_ref_num(Param),
             assemble_submit(Tuple, SarRefNum, List, Param, Encode, [])
     end.        
@@ -207,11 +212,11 @@ replace_sm(List, Param) ->
     ?REPLACE_SM(Length, SeqNum, MsgId, LenId, SaddrTon, SaddrNpi, Saddr,
                         LenS, LenTxt, Txt).
 
-assemble_submit({SarTotSeg, []}, _SarRefNum, _List, _Param, _Encode, Acc) ->
+assemble_submit({_SarTotSeg, []}, _SarRefNum, _List, _Param, _Encode, Acc) ->
     lists:reverse(Acc);
 assemble_submit({SarTotSeg, [H|T]}, SarRefNum, List, Param, Encode, Acc) ->
     {SarSegNum, Chunk} = H,
-    Handler = proplists:get_value(handler, Param), 
+%%    Handler = proplists:get_value(handler, Param), 
     Daddr = get_binary(dest_addr, List),
     SeqNum = proplists:get_value(seq_n, Param),
     ServType = get_binary(service_type, Param),
@@ -225,13 +230,7 @@ assemble_submit({SarTotSeg, [H|T]}, SarRefNum, List, Param, Encode, Acc) ->
     SaddrNpi = proplists:get_value(source_addr_npi, Param),
     DaddrTon = proplists:get_value(dest_addr_ton, Param),
     DaddrNpi = proplists:get_value(dest_addr_npi, Param),
-    NewList = lists:keyreplace(text, 1, List, {text, Chunk}),
-    case T of
-	[] -> 
-	    ok = Handler:sequence_number_handler([{sequence_number, {SeqNum, SarTotSeg, concatenated_sms_last_segment}} | NewList]);
-	_ -> 
-	    ok = Handler:sequence_number_handler([{sequence_number, {SeqNum, SarTotSeg, concatenated_sms_segment}} | NewList])
-	end,
+%%    NewList = lists:keyreplace(text, 1, List, {text, Chunk}),
     Bin = ?SUBMIT_SM_CUT(1234, SeqNum, ServType, LenType, SaddrTon, SaddrNpi, 
                 Saddr, LenSaddr, DaddrTon, DaddrNpi, Daddr, LenDaddr,
                 Encode, LenMsg, Chunk, LenChunk, SarRefNum, SarSegNum, SarTotSeg),
