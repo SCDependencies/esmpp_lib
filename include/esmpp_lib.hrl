@@ -41,7 +41,7 @@ SeqNum:32/integer                  %% sequence_number
 >>).
 
 -define(SUBMIT_SM(Length, SeqNum, ServType, LenT, SAddrTon, SAddrNpi, SAdress, LenS, 
-     DAddrTon, DAddrNpi, DAddr, LenD, DataCoding, LenSms, Text), <<
+     DAddrTon, DAddrNpi, DAddr, LenD, DataCoding, LenSms, Text, DeliveryReport), <<
 %% Mandatory parameters
 Length:32/integer,               %% command_length                  
 4:32/integer,                    %% command_id 
@@ -59,7 +59,7 @@ DAddr:LenD/binary, 0:8/integer,  %% dest_addr
 0:8/integer,                     %% priority_flag
 0:8/integer,                     %% schedule_delivery_time NOW immediate_delivery TODO !!!
 0:8/integer,                     %% validity_period NOW SMSC default              TODO !!!
-1:8/integer,                     %% registered_delivery NOW delivery receipt requested TODO !!!
+DeliveryReport:8/integer,        %% registered_delivery
 0:8/integer,                     %% replace_if_present_flag NOW default don't replace
 DataCoding:8/integer,            %% data_coding
 0:8/integer,                     %% sm_default_msg_id NOW unused
@@ -70,7 +70,7 @@ Text:LenSms/binary               %% short_message
 
 -define(SUBMIT_SM_CUT(Length, SeqNum, ServType, LenT, SAddrTon, SAddrNpi, SAdress, LenS, 
      DAddrTon, DAddrNpi, DAddr, LenD, DataCoding, LenMsg, Chunk, LenChunk, SarRefNum, 
-     SarSegNum, SarTotSeg), <<
+     SarSegNum, SarTotSeg, DeliveryReport), <<
 
 %% Mandatory parameters
 Length:32/integer,               %% command_length                  
@@ -89,7 +89,7 @@ DAddr:LenD/binary, 0:8/integer,  %% dest_addr
 0:8/integer,                     %% priority_flag
 0:8/integer,                     %% schedule_delivery_time NOW immediate_delivery TODO !!!
 0:8/integer,                     %% validity_period NOW SMSC default              TODO !!!
-1:8/integer,                     %% registered_delivery NOW delivery receipt requested TODO !!!
+DeliveryReport:8/integer,        %% registered_delivery 
 0:8/integer,                     %% replace_if_present_flag NOW default don't replace
 DataCoding:8/integer,            %% data_coding
 0:8/integer,                     %% sm_default_msg_id NOW unused
