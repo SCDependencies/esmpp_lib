@@ -10,83 +10,27 @@
         submit_latin_long/1, submit_latin_short/1,
         submit_symbols/1, unbind/1]).
 
-%%--------------------------------------------------------------------
-%% Function: suite() -> Info
-%%
-%% Info = [tuple()]
-%%   List of key/value pairs.
-%%
-%% Description: Returns list of tuples to set default properties
-%%              for the suite.
-%%
-%% Note: The suite/0 function is only meant to be used to return
-%% default data values, not perform any other operations.
-%%--------------------------------------------------------------------
+
+-define(current_function_name(), element(2, element(2, process_info(self(), current_function)))).
 
 suite() -> [{timetrap, {seconds, 20}}].
 
-%%--------------------------------------------------------------------
-%% Function: groups() -> [Group]
-%%
-%% Group = {GroupName,Properties,GroupsAndTestCases}
-%% GroupName = atom()
-%%   The name of the group.
-%% Properties = [parallel | sequence | Shuffle | {RepeatType,N}]
-%%   Group properties that may be combined.
-%% GroupsAndTestCases = [Group | {group,GroupName} | TestCase]
-%% TestCase = atom()
-%%   The name of a test case.
-%% Shuffle = shuffle | {shuffle,Seed}
-%%   To get cases executed in random order.
-%% Seed = {integer(),integer(),integer()}
-%% RepeatType = repeat | repeat_until_all_ok | repeat_until_all_fail |
-%%              repeat_until_any_ok | repeat_until_any_fail
-%%   To get execution of cases repeated.
-%% N = integer() | forever
-%%
-%% Description: Returns a list of test case group definitions.
-%%--------------------------------------------------------------------
-
 groups() -> [].
 
-%%--------------------------------------------------------------------
-%% Function: all() -> GroupsAndTestCases
-%%
-%% GroupsAndTestCases = [{group,GroupName} | TestCase]
-%% GroupName = atom()
-%%   Name of a test case group.
-%% TestCase = atom()
-%%   Name of a test case.
-%%
-%% Description: Returns the list of groups and test cases that
-%%              are to be executed.
-%%
-%%      NB: By default, we export all 1-arity user defined functions
-%%--------------------------------------------------------------------
-
-all() -> [submit_cyrillic_short, submit_cyrillic_long, 
+all() -> [submit_cyrillic_short, submit_cyrillic_long,
           submit_latin_long, submit_latin_short,
           submit_symbols, unbind].
 
-%%--------------------------------------------------------------------
-%% Function: init_per_suite(Config0) ->
-%%               Config1 | {skip,Reason} | {skip_and_save,Reason,Config1}
-%%
-%% Config0 = Config1 = [tuple()]
-%%   A list of key/value pairs, holding the test case configuration.
-%% Reason = term()
-%%   The reason for skipping the suite.
-%%
-%% Description: Initialization before the suite.
-%%
-%% Note: This function is free to add any key/value pairs to the Config
-%% variable, but should NOT alter/remove any existing entries.
-%%--------------------------------------------------------------------
+%% ct:run_test([{spec, "test/test.spec"}]).
+
 init_per_suite(Config) ->
-    ok = application:start(asn1),
-    ok = application:start(crypto),
-    ok = application:start(public_key),
-    ok = application:start(ssl),
+
+  ok = ct:pal("~p", [?current_function_name()]),
+
+%%    ok = application:start(asn1),
+%%    ok = application:start(crypto),
+%%    ok = application:start(public_key),
+%%    ok = application:start(ssl),
     ok = application:start(compiler),
     ok = application:start(syntax_tools),
     ok = application:start(goldrush),
@@ -112,11 +56,15 @@ init_per_suite(Config) ->
 %% Description: Cleanup after the suite.
 %%--------------------------------------------------------------------
 end_per_suite(Config) ->
+    ok = ct:pal("~p", [?current_function_name()]),
     ConnectOptions = ?config(connect_options, Config),
     ok = esmpp_lib_worker:terminate(end_tests, ConnectOptions),
-    ok = application:stop(ssl),
+%%    ok = application:stop(ssl),
     ok = application:stop(lager),
-    ok = application:stop(goldrush).
+    ok = application:stop(goldrush),
+    ok = application:stop(syntax_tools),
+    ok = application:stop(compiler),
+    ok = ct:pal("stop success", []).
 
 %%--------------------------------------------------------------------
 %% Function: init_per_group(GroupName, Config0) ->
@@ -218,7 +166,9 @@ submit_latin_long(Config) ->
                     esse cillum dolore eu fugiat nulla pariatur. Excepteur 
                     sint occaecat cupidatat non proident, sunt in culpa qui 
                     officia deserunt mollit anim id est laborum.">>},
-    ok = esmpp_lib_worker:submit(Pid, [Text|SubmitOptions]).
+    ok = ct:pal("esmpp_lib_worker:submit", []),
+    ok = esmpp_lib_worker:submit(Pid, [Text|SubmitOptions]),
+    ok = ct:pal("esmpp_lib_worker:submit end", []).
 
 submit_symbols(Config) ->
     Pid = ?config(pid, Config),
