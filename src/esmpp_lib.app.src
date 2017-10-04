@@ -13,7 +13,7 @@
                   ssl,
                   sasl
                  ]}, 
-  {included_applications, [erlang_lib]},
+  {included_applications, []},
   {mod, { esmpp_lib_app, []}},
   {env, []}
  ]}.

@@ -1,9 +1,9 @@
 
--define(LOG_DEBUG(Format, Args),    elog:debug(debug, self(), Format, Args)).
--define(LOG_INFO(Format, Args),     elog:info(info, self(), Format, Args)).
--define(LOG_WARNING(Format, Args),  elog:warning(warning, self(), Format, Args)).
--define(LOG_ERROR(Format, Args),    elog:error(error, self(), Format, Args)).
--define(LOG_CRITICAL(Format, Args), elog:error(critical, self(), Format, Args)).
+-define(LOG_DEBUG(Format, Args),    elog:debug(Format, Args)).
+-define(LOG_INFO(Format, Args),     elog:info(Format, Args)).
+-define(LOG_WARNING(Format, Args),  elog:warning(Format, Args)).
+-define(LOG_ERROR(Format, Args),    elog:error(Format, Args)).
+-define(LOG_CRITICAL(Format, Args), elog:error(Format, Args)).
 
 -define(BIND(Length, ComId, SeqNum, SysId, LenId, Pass, LenP, SysType, LenT,
                 IntVer, AddrTon, AddrNpi, AddrRange, LenR), <<
