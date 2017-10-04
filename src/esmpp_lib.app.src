@@ -11,8 +11,9 @@
                   crypto,
                   public_key,
                   ssl,
-                  lager  
-                 ]},
+                  sasl
+                 ]}, 
+  {included_applications, [erlang_lib]},
   {mod, { esmpp_lib_app, []}},
   {env, []}
  ]}.
