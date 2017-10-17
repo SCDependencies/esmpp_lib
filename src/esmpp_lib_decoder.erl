@@ -455,11 +455,12 @@ get_tag(<<TagId:16/integer, Rest/binary>>, List) ->
             {Value, Tail} = parse_other_tag(Rest),
             {Tail, [{mbsessionid, Value}|List]};
         _ ->
-            ?LOG_WARNING("Unknown smpp option ~p~n", [TagId]),
-            {<<>>, List}
-    end, 
+          {Value, Tail} = parse_other_tag(Rest),
+          ?LOG_WARNING("Unknown smpp option ~p ~p~n", [TagId, Value]),
+          {Tail, [{TagId, Value}|List]}
+        end,
     get_tag(Tail1, List1).
-             
+
 parse_integer_tag(Bin) ->  
     <<L:16/integer, _>> = Bin,
     Len = L*8,
